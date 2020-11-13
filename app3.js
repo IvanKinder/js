@@ -115,8 +115,8 @@ function getProductMarkup(product) {
     <div>${p.name}</div>
     <img src="${p.imageUrl} " alt="">
     <div> ${p.price}</div >
-        <a href="https://example.com/producs/${p.id}">Подробнее</a>
-</div > `));
+    <a href="https://example.com/producs/${p.id}">Подробнее</a>
+    </div > `));
 }
 
 let buttons = document.querySelectorAll('button');
