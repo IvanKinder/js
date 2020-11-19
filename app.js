@@ -1,50 +1,71 @@
 'use strict';
-const texts = {
-    text1: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
-    text2: 'Далеко-далеко за словесными горами в стране гласных и согласных живут рыбные тексты.',
-    text3: 'Проснувшись однажды утром после беспокойного сна, Грегор Замза обнаружил.'
-};
+// 1. получите все кнопки и сохраните в переменную
 
-/* 
-1. Получите ссылку на .text, например с помощью querySelector
-2. Получите коллекцию, в которой хранятся все .nav-link, например с помощью querySelectorAll
-    2.1 Переберите полученную коллекцию, например с помощью forEach, и каждой ссылке назначьте
-    обработчик клика функцию clickHandler.
-*/
-let tex = document.querySelector('.text');
-let links = document.querySelectorAll('.nav-link');
-links.forEach(link => link.addEventListener('click', clickHandler));
+// 1.1 затем проитерируйтесь по кнопкам и каждой из
+// них добавьте обработчик клика - функцию handleClick
+let buttons = document.querySelectorAll('button');
+buttons.forEach(button => button.addEventListener('click', handleClick));
 
 /**
- * Обработчик клика по .nav-link
- * @param {MouseEvent} event 
+ * Функция обрабатывает клик по кнопке в карточке товара и попеременно вызывает
+ * функции для показа или скрытия текста о товаре.
+ * @param {MouseEvent} clickedButtonEvent 
  */
-function clickHandler(event) {
-    // здесь вызывайте changeText и changeActiveClass, и передавайте
-    // им объект события.
-    changeActiveClass(event);
-    changeText(event);
+function handleClick(clickedButtonEvent) {
+    // 2. из объекта события получите ссылку на .product и
+    // сохраните в переменную:
+    const cardNode = clickedButtonEvent.target.parentNode;
+    // 3. создайте литерал объекта со следующими свойствами:
+    const card = {
+        wrap: cardNode, // здесь элемент с классом .product
+        img: cardNode.querySelector('img'), // здесь картинка внутри .product
+        productName: cardNode.querySelector('.productName'), // здесь .productName, который внутри .product
+        button: cardNode.querySelector('button') // здесь button, который внутри .product
+    };
 
+    // 4. получаем текст на кнопке, которая внутри .product
+    let button_txt = card.button.innerHTML;
+    if (button_txt == 'Подробнее') { // 4.1 проверяем равняется ли этот текст строке "Подробнее"
+        // 4.2 если да, то передаем объект card в функцию showMoreText
+        showMoreText(card);
+    } else if (button_txt == 'Отмена') { // 4.3 проверяем равняется ли текст на кнопке строке "Отмена"
+        // 4.4 если да, то передаем объект card в функцию hideMoreText
+        hideMoreText(card);
+    }
 }
 
 /**
- * Эта функция должна убирать .active у предыдущего .nav-link и ставить его
- * на тот, по которому кликнули.
- * @param {MouseEvent} event 
+ * Функция скрывает текст с описанием товара.
+ * @param {Object} card 
+ * @param {HTMLDivElement} card.wrap
+ * @param {HTMLImageElement} card.img
+ * @param {HTMLDivElement} card.productName
+ * @param {HTMLButtonElement} card.button
  */
-function changeActiveClass(event) {
-    links.forEach(link1 => link1.classList.remove('active'));
-    event.target.classList.add('active');
+function hideMoreText(card) {
+    // 5. картинке внутри .product ставим стиль display: block
+    card.img.style.display = 'block';
+    // 5.1 внутри .product находим элемент с классом .desc и удаляем его
+    card.wrap.querySelector('.desc').remove();
+    // 5.2 кнопке, которая внутри .product ставим текст "Подробнее"
+    card.button.innerHTML = 'Подробнее';
 }
 
 /**
- * Эта фукнция должна читать текст (например через textContent) из 
- * .nav-link по которому кликнули и в зависимости от этого в .text
- * ставить соответствующий текст из texts.
- * @param {MouseEvent} event 
+ * Функция показывает текст с описанием товара.
+ * @param {Object} card 
+ * @param {HTMLDivElement} card.wrap
+ * @param {HTMLImageElement} card.img
+ * @param {HTMLDivElement} card.productName
+ * @param {HTMLButtonElement} card.button 
  */
-function changeText(event) {
-    if (event.target.textContent == 'Link 1') { tex.innerHTML = texts.text1 };
-    if (event.target.textContent == 'Link 2') { tex.innerHTML = texts.text2 };
-    if (event.target.textContent == 'Link 3') { tex.innerHTML = texts.text3 };
+function showMoreText(card) {
+    // 6. картинке внутри .product ставим display: none
+    card.img.style.display = 'none';
+    // 6.1 сохраняем произвольный текст в переменную
+    let paragraph = 'Lorem ipsum dolor';
+    // 6.2 внутри .product есть .productName, после него вставляем div.desc и текстом из переменной из п. 6.1
+    card.productName.insertAdjacentHTML('afterend', `<div class="desc">${paragraph}</div>`);
+    // 6.3 внутри .product у кнопки текст ставим "Отмена"
+    card.button.innerHTML = 'Отмена';
 }
